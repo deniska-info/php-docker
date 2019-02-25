@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     sudo \
     ssmtp \
-    sendmail \
     zip \
 ## phpize deps
     autoconf \
@@ -116,7 +115,10 @@ RUN set -x && \
     tar -xof php.tar.xz -C /usr/src/php --strip-components=1 && \
     rm php.tar.xz* && \
     cd /usr/src/php && \
-    ./configure --disable-cgi \
+    export PATH=/usr/bin/apxs2:$PATH && \
+    ./configure --enable-cgi \
+## comment next line (--with-apxs2) if you need php-cgi to be compiled as well
+## see last comment here: https://bugs.php.net/bug.php?id=60144
         $(command -v apxs2 > /dev/null 2>&1 && echo '--with-apxs2=/usr/bin/apxs2' || true) \
         --with-config-file-path="$PHP_INI_DIR" \
         --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
